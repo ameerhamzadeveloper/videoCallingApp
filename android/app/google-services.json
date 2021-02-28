@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "940627960183",
+    "project_id": "appointmentvideocalling-client",
+    "storage_bucket": "appointmentvideocalling-client.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:940627960183:android:653df0527623d34ab60172",
+        "android_client_info": {
+          "package_name": "com.mobilemidny.mobilemidny"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "940627960183-cv6cc4oho4bp995108pctgpe8qah8ejh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCO6AwKkfldlWlewhcjDMcvUaEqEMchRgA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "940627960183-cv6cc4oho4bp995108pctgpe8qah8ejh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
