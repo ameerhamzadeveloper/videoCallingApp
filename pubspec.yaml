@@ -29,8 +29,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
 
-  agora_rtc_engine: ^3.2.1
-  permission_handler: ^5.0.1
+  jitsi_meet: ^1.2.0
 
   cloud_firestore: ^0.16.0+1
   firebase_auth: ^0.20.1

@@ -1,6 +1,10 @@
+import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:jitsi_meet/feature_flag/feature_flag_enum.dart';
+import 'package:jitsi_meet/jitsi_meet.dart';
+import 'package:jitsi_meet/jitsi_meeting_listener.dart';
 import 'package:mobilemidny/services.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 
 import 'CallPage.dart';
@@ -9,7 +13,7 @@ class ClientHomePage extends StatefulWidget {
   @override
   _ClientHomePageState createState() => _ClientHomePageState();
 }
-
+FirebaseServices services = FirebaseServices();
 class _ClientHomePageState extends State<ClientHomePage> {
   final myController = TextEditingController();
   bool _validateError = false;
@@ -19,16 +23,18 @@ class _ClientHomePageState extends State<ClientHomePage> {
   @override
   void initState() {
     super.initState();
-    FirebaseServices services = FirebaseServices();
+
     services.signinAnonimously();
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         centerTitle: true,
-        title: Text('Appointment Booking'),
-        elevation: 0,
+        title: Text('Appointment Booking',style: TextStyle(color: Colors.black),),
+        // elevation: 0,
       ),
       body: SafeArea(
         child: Center(
@@ -69,7 +75,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
                     color: Colors.blue,
                     onPressed: (){
                       if(_formKey.currentState.validate()){
-                       onJoin(name);
+                        joinMeeting();
                       }
                     },
                     child: Text("Call To Book Appointment",style: TextStyle(fontSize: 18,color: Colors.white),),
@@ -119,17 +125,49 @@ class _ClientHomePageState extends State<ClientHomePage> {
     );
   }
 
-  Future<void> onJoin(String name) async {
-    print("Press");
-    await _handleCameraAndMic(Permission.camera);
-    await _handleCameraAndMic(Permission.microphone);
-    FirebaseServices services = FirebaseServices();
-    services.makeCall(context, name);
 
+  Future<void> joinMeeting() async {
+    try{
+      Map<FeatureFlagEnum, bool> featureeFlags = {
+        FeatureFlagEnum.WELCOME_PAGE_ENABLED : false,
+      };
+      if(Platform.isAndroid) {
+        featureeFlags[FeatureFlagEnum.CALL_INTEGRATION_ENABLED] = false;
+      } else if(Platform.isIOS) {
+        featureeFlags[FeatureFlagEnum.PIP_ENABLED] = false;
+      }
+      var callID;
+      var r = Random();
+      const _chars = 'BCDEFGHIJKLMNOPQRSTUVWXYZ';
+      callID = List.generate(5, (index) => _chars[r.nextInt(_chars.length)]).join();
+
+      var options = JitsiMeetingOptions()
+        ..room = callID // Required, spaces will be trimmed
+        ..userDisplayName = name
+        ..audioMuted = false
+        ..videoMuted = false
+        ..featureFlags.addAll(featureeFlags);
+      await JitsiMeet.joinMeeting(
+          options,
+          listener: JitsiMeetingListener(onConferenceWillJoin: ({message}) {
+            debugPrint("${options.room} will join with message: $message");
+          }, onConferenceJoined: ({message}) {
+            print("call joined........============>");
+            debugPrint("${options.room} joined with message: $message");
+          }, onConferenceTerminated: ({message}) {
+            print("call end........============>");
+            debugPrint("${options.room} terminated with message: $message");
+          },
+          )
+      );
+      services.makeCall(context, name,callID);
+    } catch(err) {
+      print(err);
+    }
   }
 
-  Future<void> _handleCameraAndMic(Permission permission) async {
-    final status = await permission.request();
-    print(status);
-  }
+  // Future<void> _handleCameraAndMic(Permission permission) async {
+  //   final status = await permission.request();
+  //   print(status);
+  // }
 }
