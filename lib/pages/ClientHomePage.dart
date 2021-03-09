@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jitsi_meet/feature_flag/feature_flag_enum.dart';
 import 'package:jitsi_meet/jitsi_meet.dart';
@@ -67,6 +68,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
                         if(val.isEmpty){
                           return "Name is Required";
                         }
+                        return null;
                       },
                     ),
                   ),
@@ -75,10 +77,21 @@ class _ClientHomePageState extends State<ClientHomePage> {
                     color: Colors.blue,
                     onPressed: (){
                       if(_formKey.currentState.validate()){
-                        joinMeeting();
+                        FirebaseFirestore.instance.collection('calls').get().then((value){
+                          if(value.docs.length == 0){
+                            joinMeeting();
+                          }else{
+                            showDialog(
+                                context: context,
+                                child: AlertDialog(
+                                  content: Text("Another Client is Already in call\nPlease Wait!"),
+                                )
+                            );
+                          }
+                        });
                       }
                     },
-                    child: Text("Call To Book Appointment",style: TextStyle(fontSize: 18,color: Colors.white),),
+                    child: Text("Call",style: TextStyle(fontSize: 18,color: Colors.white),),
                   ),
                   Padding(padding: EdgeInsets.only(top: 20)),
                   Text(
@@ -155,7 +168,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
             print("call joined........============>");
             debugPrint("${options.room} joined with message: $message");
           }, onConferenceTerminated: ({message}) {
-            print("call end........============>");
+                print("call end........============>");
             debugPrint("${options.room} terminated with message: $message");
           },
           )

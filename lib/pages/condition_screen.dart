@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobilemidny/pages/AdminHomePage.dart';
 import 'package:mobilemidny/pages/ClientHomePage.dart';
+import 'package:mobilemidny/pages/bottom_nav_bar.dart';
 class ConditionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,8 @@ class ConditionScreen extends StatelessWidget {
                 minWidth: MediaQuery.of(context).size.width,
                 color: Colors.lightBlueAccent,
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ClientHomePage()));
+                  Navigator.pushReplacement(context, MaterialPageRoute(
+                      builder: (context) => BottomNavBar()));
                 },
                 child: Text("Client Side",style: TextStyle(fontSize: 18,color: Colors.white),),
               ),

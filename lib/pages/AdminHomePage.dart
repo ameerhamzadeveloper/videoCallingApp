@@ -30,7 +30,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
           stream: strm.collection('calls').snapshots(),
           builder: (context,snapshot){
             if(snapshot.hasData){
-               if(snapshot.data.docs.length != 0){
+               if(snapshot.data.docs.length > 0){
                  // print(snapshot.data.docs[0]['name']);
                  joinMeeting(snapshot.data);
                  return Container();
